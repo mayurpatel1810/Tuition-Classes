@@ -1,0 +1,18 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Build output
+backend/target/
+frontend/dist/
+
+# Dependencies
+frontend/node_modules/
+
+# Uploaded images (runtime data, not source code)
+backend/uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
