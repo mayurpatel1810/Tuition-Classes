@@ -19,6 +19,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.util.List;
 
 @Configuration
@@ -77,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/faculty/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/results/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/announcements/all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/announcements/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/institute-info").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/enquiries").permitAll()
@@ -85,9 +89,26 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+            // Missing/expired token -> clean 401 JSON (frontend then sends the admin back to login).
+            // Without this Spring returned an empty 403, so the admin pages only showed a generic error.
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint((request, response, authException) ->
+                            writeJsonError(response, HttpServletResponse.SC_UNAUTHORIZED,
+                                    "Your session has expired. Please log in again."))
+                    .accessDeniedHandler((request, response, accessDeniedException) ->
+                            writeJsonError(response, HttpServletResponse.SC_FORBIDDEN,
+                                    "You do not have permission to perform this action"))
+            )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private static void writeJsonError(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"success\":false,\"message\":\"" + message + "\"}");
     }
 }

@@ -28,6 +28,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<AnnouncementResponseDTO> getAll() {
+        return announcementRepository.findAllByOrderByAnnouncementDateDesc()
+                .stream().map(announcementMapper::toResponseDTO).toList();
+    }
+
+    @Override
     @Transactional
     public AnnouncementResponseDTO create(AnnouncementRequestDTO dto) {
         Announcement saved = announcementRepository.save(announcementMapper.toEntity(dto));

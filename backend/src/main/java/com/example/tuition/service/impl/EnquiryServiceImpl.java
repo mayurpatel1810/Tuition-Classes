@@ -8,6 +8,7 @@ import com.example.tuition.mapper.EnquiryMapper;
 import com.example.tuition.repository.EnquiryRepository;
 import com.example.tuition.service.EnquiryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,8 @@ public class EnquiryServiceImpl implements EnquiryService {
     @Override
     @Transactional(readOnly = true)
     public List<EnquiryResponseDTO> getAll() {
-        return enquiryRepository.findAll().stream().map(enquiryMapper::toResponseDTO).toList();
+        // Newest enquiries first so the admin sees fresh leads at the top
+        return enquiryRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream().map(enquiryMapper::toResponseDTO).toList();
     }
 
     @Override

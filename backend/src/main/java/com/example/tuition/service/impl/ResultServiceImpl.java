@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,21 +24,27 @@ public class ResultServiceImpl implements ResultService {
     @Override
     @Transactional(readOnly = true)
     public List<ResultResponseDTO> getFiltered(Integer year, String className, String exam) {
-        List<Result> results;
+        // Any combination of filters works (e.g. year + class without exam).
+        // Text filters are case-insensitive "contains" matches so "class 10" finds "Class 10".
+        String classFilter = normalize(className);
+        String examFilter = normalize(exam);
 
-        if (year != null && className != null && exam != null) {
-            results = resultRepository.findByYearAndClassNameAndExam(year, className, exam);
-        } else if (year != null) {
-            results = resultRepository.findByYear(year);
-        } else if (className != null) {
-            results = resultRepository.findByClassName(className);
-        } else if (exam != null) {
-            results = resultRepository.findByExam(exam);
-        } else {
-            results = resultRepository.findAll();
-        }
+        return resultRepository.findAll().stream()
+                .filter(r -> year == null || year.equals(r.getYear()))
+                .filter(r -> classFilter == null || contains(r.getClassName(), classFilter))
+                .filter(r -> examFilter == null || contains(r.getExam(), examFilter))
+                .sorted(Comparator.comparing(Result::getYear, Comparator.nullsLast(Comparator.reverseOrder()))
+                        .thenComparing(Result::getPercentage, Comparator.nullsLast(Comparator.reverseOrder())))
+                .map(resultMapper::toResponseDTO)
+                .toList();
+    }
 
-        return results.stream().map(resultMapper::toResponseDTO).toList();
+    private static String normalize(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim().toLowerCase();
+    }
+
+    private static boolean contains(String fieldValue, String filter) {
+        return fieldValue != null && fieldValue.toLowerCase().contains(filter);
     }
 
     @Override

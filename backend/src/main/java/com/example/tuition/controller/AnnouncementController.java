@@ -23,6 +23,12 @@ public class AnnouncementController {
         return ApiResponse.success("Announcements fetched successfully", announcementService.getActive());
     }
 
+    /** Admin only (see SecurityConfig): includes inactive announcements so they can be edited/re-activated. */
+    @GetMapping("/all")
+    public ApiResponse<List<AnnouncementResponseDTO>> getAllForAdmin() {
+        return ApiResponse.success("Announcements fetched successfully", announcementService.getAll());
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<AnnouncementResponseDTO> create(@Valid @RequestBody AnnouncementRequestDTO dto) {

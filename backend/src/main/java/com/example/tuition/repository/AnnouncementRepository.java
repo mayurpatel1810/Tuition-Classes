@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
     List<Announcement> findByActiveTrueOrderByAnnouncementDateDesc();
+    List<Announcement> findAllByOrderByAnnouncementDateDesc();
 }

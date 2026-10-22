@@ -18,13 +18,21 @@ public class InstituteInformationServiceImpl implements InstituteInformationServ
     private final InstituteInformationMapper mapper;
 
     @Override
-    @Transactional(readOnly = true)
+    // NOTE: must NOT be readOnly — on first call this inserts the default row.
+    // A read-only transaction made PostgreSQL reject the INSERT, which broke the
+    // admin "Institute Info" page and the public header/footer details.
+    @Transactional
     public InstituteInformationResponseDTO get() {
         InstituteInformation info = repository.findAll().stream().findFirst()
                 .orElseGet(() -> repository.save(
                         InstituteInformation.builder()
-                                .instituteName("Your Institute Name")
-                                .tagline("Excellence in Education")
+                                .instituteName("Bright Future Institute")
+                                .tagline("Excellence in Education, Since 2010")
+                                .address("204, Second Floor, Shreeji Complex, Near Vijay Cross Roads, Navrangpura, Ahmedabad, Gujarat 380009")
+                                .phone("+91 98765 43210")
+                                .email("info@brightfuture.edu")
+                                .about("Bright Future Institute has been shaping academic success stories for over a decade, "
+                                        + "helping students unlock their full potential through expert mentorship and proven teaching methods.")
                                 .build()
                 ));
         return mapper.toResponseDTO(info);
