@@ -1,40 +1,47 @@
 import { NavLink } from "react-router-dom";
+import Logo from "../common/Logo";
+import Icon from "../common/Icon";
+import { useInstitute } from "../../context/InstituteContext";
 
 const links = [
-  { to: "/admin/dashboard", label: "📊 Dashboard" },
-  { to: "/admin/toppers", label: "🏆 Toppers" },
-  { to: "/admin/results", label: "📄 Results" },
-  { to: "/admin/courses", label: "📚 Courses" },
-  { to: "/admin/faculty", label: "👩‍🏫 Faculty" },
-  { to: "/admin/gallery", label: "🖼️ Gallery" },
-  { to: "/admin/announcements", label: "📢 Announcements" },
-  { to: "/admin/enquiries", label: "✉️ Enquiries" },
-  { to: "/admin/contact", label: "⚙️ Institute Info" },
+  { to: "/admin/dashboard", label: "Dashboard", icon: "📊" },
+  { to: "/admin/toppers", label: "Toppers", icon: "🏆" },
+  { to: "/admin/results", label: "Results", icon: "📄" },
+  { to: "/admin/courses", label: "Courses", icon: "📚" },
+  { to: "/admin/faculty", label: "Faculty", icon: "👩‍🏫" },
+  { to: "/admin/gallery", label: "Gallery", icon: "🖼️" },
+  { to: "/admin/announcements", label: "Announcements", icon: "📢" },
+  { to: "/admin/enquiries", label: "Enquiries", icon: "✉️" },
+  { to: "/admin/contact", label: "Institute Info", icon: "⚙️" },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ open }) {
+  const { info } = useInstitute();
+
   return (
-    <aside style={{
-      width: 240, background: "var(--color-primary)", color: "white",
-      minHeight: "100vh", padding: "24px 16px", position: "sticky", top: 0
-    }}>
-      <div style={{ fontWeight: 700, fontSize: "1.1rem", marginBottom: 32, padding: "0 8px" }}>
-        Admin Panel
+    <aside className={`admin-sidebar ${open ? "open" : ""}`}>
+      <div className="admin-brand">
+        <Logo size={38} />
+        <div>
+          <div className="admin-brand-name">{info.instituteName}</div>
+          <div className="admin-brand-sub">Admin Panel</div>
+        </div>
       </div>
-      <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+
+      <nav className="admin-nav">
         {links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            style={({ isActive }) => ({
-              padding: "10px 12px", borderRadius: "var(--radius-sm)", fontSize: "0.9rem",
-              background: isActive ? "rgba(255,255,255,0.15)" : "transparent",
-            })}
-          >
+          <NavLink key={link.to} to={link.to} className={({ isActive }) => (isActive ? "active" : "")}>
+            <span aria-hidden="true">{link.icon}</span>
             {link.label}
           </NavLink>
         ))}
       </nav>
+
+      <div className="admin-sidebar-footer">
+        <a href="/" target="_blank" rel="noreferrer">
+          <Icon name="external" size={14} /> View website
+        </a>
+      </div>
     </aside>
   );
 }

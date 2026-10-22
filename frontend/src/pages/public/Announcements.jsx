@@ -1,4 +1,5 @@
 import useFetch from "../../hooks/useFetch";
+import usePageTitle from "../../hooks/usePageTitle";
 import announcementService from "../../services/announcementService";
 import AnnouncementCard from "../../components/public/AnnouncementCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -6,6 +7,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 
 export default function Announcements() {
+  usePageTitle("Announcements");
   const { data: announcements, loading, error, refetch } = useFetch(() => announcementService.getAll());
 
   return (

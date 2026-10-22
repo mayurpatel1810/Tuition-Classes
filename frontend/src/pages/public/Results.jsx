@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useFetch from "../../hooks/useFetch";
+import usePageTitle from "../../hooks/usePageTitle";
 import resultService from "../../services/resultService";
 import ResultTable from "../../components/public/ResultTable";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -7,6 +8,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 
 export default function Results() {
+  usePageTitle("Results");
   const [filters, setFilters] = useState({ year: "", className: "", exam: "" });
 
   const { data: results, loading, error, refetch } = useFetch(
@@ -22,7 +24,7 @@ export default function Results() {
       <p className="section-subtitle">Browse our students' results, filterable by year, class, or exam</p>
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32, justifyContent: "center" }}>
-        <input name="year" placeholder="Year (e.g. 2026)" value={filters.year} onChange={handleChange} style={inputStyle} />
+        <input name="year" type="number" min="2000" max="2100" placeholder="Year (e.g. 2026)" value={filters.year} onChange={handleChange} style={inputStyle} />
         <input name="className" placeholder="Class (e.g. Class 12)" value={filters.className} onChange={handleChange} style={inputStyle} />
         <input name="exam" placeholder="Exam (e.g. Board Exam)" value={filters.exam} onChange={handleChange} style={inputStyle} />
       </div>

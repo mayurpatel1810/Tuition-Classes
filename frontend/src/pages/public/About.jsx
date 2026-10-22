@@ -1,9 +1,15 @@
+import usePageTitle from "../../hooks/usePageTitle";
+import { useInstitute } from "../../context/InstituteContext";
+
 export default function About() {
+  usePageTitle("About Us");
+  const { info } = useInstitute();
+
   return (
     <div className="container section">
       <h1 className="section-title">About Us</h1>
-      <p className="section-subtitle">
-        Bright Future Institute has been shaping academic success stories for over a decade.
+      <p className="section-subtitle" style={{ whiteSpace: "pre-line" }}>
+        {info.about || `${info.instituteName} has been shaping academic success stories for over a decade.`}
       </p>
 
       <div className="grid grid-2" style={{ marginBottom: 48 }}>
@@ -32,9 +38,9 @@ export default function About() {
       <h3 style={{ marginBottom: 12 }}>Experience & Achievements</h3>
       <div className="grid grid-3">
         {[
-          { stat: "14+", label: "Years of Experience" },
+          { stat: "16+", label: "Years of Teaching" },
           { stat: "5000+", label: "Students Mentored" },
-          { stat: "200+", label: "Top Rank Holders" },
+          { stat: "200+", label: "Students Above 90%" },
         ].map((s) => (
           <div key={s.label} style={{ textAlign: "center", padding: 24, background: "var(--color-surface)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-sm)" }}>
             <div style={{ fontSize: "2rem", fontWeight: 700, color: "var(--color-accent)" }}>{s.stat}</div>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import fileService from "../../services/fileService";
-
-const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api").replace(/\/api$/, "");
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function ImageUpload({ label, value, onChange }) {
   const [uploading, setUploading] = useState(false);
@@ -23,9 +22,7 @@ export default function ImageUpload({ label, value, onChange }) {
     }
   };
 
-  const previewSrc = value
-    ? (value.startsWith("http") ? value : `${API_ORIGIN}${value}`)
-    : null;
+  const previewSrc = resolveImageUrl(value);
 
   return (
     <div style={{ marginBottom: 16 }}>

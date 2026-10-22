@@ -1,4 +1,5 @@
 import { resolveImageUrl } from "../../utils/imageUrl";
+import Avatar from "../common/Avatar";
 
 export default function TopperCard({ topper }) {
   return (
@@ -10,15 +11,19 @@ export default function TopperCard({ topper }) {
       onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "var(--shadow-md)"; }}
       onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "var(--shadow-sm)"; }}
     >
-      <img
-        src={resolveImageUrl(topper.photoUrl) || "https://placehold.co/300x300?text=Photo"}
-        alt={topper.studentName}
-        style={{ width: "100%", height: 220, objectFit: "cover" }}
-      />
+      {topper.photoUrl ? (
+        <img
+          src={resolveImageUrl(topper.photoUrl)}
+          alt={topper.studentName}
+          style={{ width: "100%", height: 220, objectFit: "cover" }}
+        />
+      ) : (
+        <Avatar name={topper.studentName} />
+      )}
       <div style={{ padding: 20 }}>
         <h4>{topper.studentName}</h4>
         <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", margin: "4px 0" }}>
-          {topper.className} · {topper.exam} {topper.year}
+          {topper.className} · {[topper.exam, topper.year].filter(Boolean).join(" ")}
         </p>
         <p style={{ color: "var(--color-accent)", fontWeight: 700, fontSize: "1.4rem", margin: "8px 0" }}>
           {topper.percentage}%

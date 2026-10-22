@@ -1,4 +1,5 @@
 import useFetch from "../../hooks/useFetch";
+import usePageTitle from "../../hooks/usePageTitle";
 import topperService from "../../services/topperService";
 import TopperCard from "../../components/public/TopperCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -6,6 +7,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 
 export default function Toppers() {
+  usePageTitle("Our Toppers");
   const { data: toppers, loading, error, refetch } = useFetch(() => topperService.getAll());
 
   return (

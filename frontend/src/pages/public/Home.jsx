@@ -8,11 +8,16 @@ import TopperCard from "../../components/public/TopperCard";
 import AnnouncementCard from "../../components/public/AnnouncementCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
+import usePageTitle from "../../hooks/usePageTitle";
+import { useInstitute } from "../../context/InstituteContext";
 
 export default function Home() {
-  const { data: courses, loading: coursesLoading } = useFetch(() => courseService.getAll());
+  usePageTitle(null);
+  const { info } = useInstitute();
+  const { data: allCourses, loading: coursesLoading } = useFetch(() => courseService.getAll());
   const { data: toppers, loading: toppersLoading } = useFetch(() => topperService.getAll());
   const { data: announcements, loading: announcementsLoading } = useFetch(() => announcementService.getAll());
+  const courses = (allCourses || []).filter((c) => c.active !== false);
 
   return (
     <>
@@ -21,9 +26,9 @@ export default function Home() {
         color: "white", padding: "100px 0", textAlign: "center"
       }}>
         <div className="container">
-          <h1 style={{ fontSize: "2.75rem", marginBottom: 16 }}>Bright Future Institute</h1>
+          <h1 style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", marginBottom: 16 }}>{info.instituteName}</h1>
           <p style={{ fontSize: "1.15rem", opacity: 0.9, marginBottom: 8 }}>
-            Excellence in Education, Since 2010
+            {info.tagline}
           </p>
           <p style={{ maxWidth: 560, margin: "0 auto 32px", opacity: 0.85 }}>
             We help students unlock their full academic potential through expert mentorship,

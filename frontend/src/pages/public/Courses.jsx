@@ -1,4 +1,5 @@
 import useFetch from "../../hooks/useFetch";
+import usePageTitle from "../../hooks/usePageTitle";
 import courseService from "../../services/courseService";
 import CourseCard from "../../components/public/CourseCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -6,7 +7,9 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 
 export default function Courses() {
-  const { data: courses, loading, error, refetch } = useFetch(() => courseService.getAll());
+  usePageTitle("Courses");
+  const { data: allCourses, loading, error, refetch } = useFetch(() => courseService.getAll());
+  const courses = (allCourses || []).filter((c) => c.active !== false);
 
   return (
     <div className="container section">
@@ -18,7 +21,7 @@ export default function Courses() {
       {!loading && !error && !courses?.length && <EmptyState message="No courses available yet." />}
       {!loading && !error && courses?.length > 0 && (
         <div className="grid grid-3">
-          {courses.filter((c) => c.active !== false).map((c) => <CourseCard key={c.id} course={c} />)}
+          {courses.map((c) => <CourseCard key={c.id} course={c} />)}
         </div>
       )}
     </div>

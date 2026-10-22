@@ -6,11 +6,21 @@ export default function CourseCard({ course }) {
       background: "var(--color-surface)", borderRadius: "var(--radius-lg)",
       overflow: "hidden", boxShadow: "var(--shadow-sm)"
     }}>
-      <img
-        src={resolveImageUrl(course.imageUrl) || "https://placehold.co/400x220?text=Course"}
-        alt={course.name}
-        style={{ width: "100%", height: 180, objectFit: "cover" }}
-      />
+      {course.imageUrl ? (
+        <img
+          src={resolveImageUrl(course.imageUrl)}
+          alt={course.name}
+          style={{ width: "100%", height: 180, objectFit: "cover" }}
+        />
+      ) : (
+        <div style={{
+          height: 180, display: "grid", placeItems: "center", padding: 20, textAlign: "center",
+          background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-light))",
+          color: "white", fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: "1.1rem",
+        }}>
+          {course.name}
+        </div>
+      )}
       <div style={{ padding: 20 }}>
         <h4 style={{ marginBottom: 6 }}>{course.name}</h4>
         <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginBottom: 12 }}>
@@ -26,7 +36,9 @@ export default function CourseCard({ course }) {
           </p>
         )}
         {course.fees != null && (
-          <p style={{ fontWeight: 700, color: "var(--color-primary)" }}>₹{course.fees}</p>
+          <p style={{ fontWeight: 700, color: "var(--color-primary)" }}>
+            ₹{Number(course.fees).toLocaleString("en-IN")} <span style={{ fontWeight: 400, fontSize: "0.8rem", color: "var(--color-text-muted)" }}>total fees</span>
+          </p>
         )}
       </div>
     </div>

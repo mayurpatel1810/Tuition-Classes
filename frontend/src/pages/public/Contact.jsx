@@ -1,7 +1,14 @@
 import { useState } from "react";
 import enquiryService from "../../services/enquiryService";
+import usePageTitle from "../../hooks/usePageTitle";
+import { useInstitute } from "../../context/InstituteContext";
+import Icon from "../../components/common/Icon";
+
+const telHref = (phone) => `tel:${String(phone).replace(/[^\d+]/g, "")}`;
 
 export default function Contact() {
+  usePageTitle("Contact & Admissions");
+  const { info } = useInstitute();
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [status, setStatus] = useState({ type: null, message: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -34,21 +41,21 @@ export default function Contact() {
       <div className="grid grid-2">
         <div>
           <div style={infoCard}>
-            <h4>📍 Address</h4>
-            <p style={{ color: "var(--color-text-muted)" }}>123 Education Lane, Ahmedabad, Gujarat, India</p>
+            <h4 style={infoTitle}><Icon name="pin" /> Address</h4>
+            <p style={{ color: "var(--color-text-muted)" }}>{info.address}</p>
           </div>
           <div style={infoCard}>
-            <h4>📞 Phone</h4>
-            <p style={{ color: "var(--color-text-muted)" }}>+91 98765 43210</p>
+            <h4 style={infoTitle}><Icon name="phone" /> Phone</h4>
+            <a href={telHref(info.phone)} style={{ color: "var(--color-text-muted)" }}>{info.phone}</a>
           </div>
           <div style={infoCard}>
-            <h4>✉️ Email</h4>
-            <p style={{ color: "var(--color-text-muted)" }}>info@brightfuture.edu</p>
+            <h4 style={infoTitle}><Icon name="mail" /> Email</h4>
+            <a href={`mailto:${info.email}`} style={{ color: "var(--color-text-muted)" }}>{info.email}</a>
           </div>
           <div style={{ ...infoCard, height: 220, padding: 0, overflow: "hidden" }}>
             <iframe
               title="location"
-              src="https://maps.google.com/maps?q=Ahmedabad&output=embed"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(info.address || "Ahmedabad")}&output=embed`}
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -103,6 +110,8 @@ function FormField({ label, name, value, onChange, type = "text", as = "input", 
     </div>
   );
 }
+
+const infoTitle = { display: "flex", alignItems: "center", gap: 8, color: "var(--color-primary)", marginBottom: 4 };
 
 const infoCard = {
   background: "var(--color-surface)", padding: 20, borderRadius: "var(--radius-md)",

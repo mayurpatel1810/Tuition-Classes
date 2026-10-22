@@ -1,31 +1,65 @@
+import { Link } from "react-router-dom";
+import { useInstitute } from "../../context/InstituteContext";
+import Logo from "./Logo";
+import Icon from "./Icon";
+
+const telHref = (phone) => `tel:${String(phone).replace(/[^\d+]/g, "")}`;
+
 export default function Footer() {
+  const { info } = useInstitute();
+  const year = new Date().getFullYear();
+
   return (
-    <footer style={{ background: "var(--color-primary)", color: "white", padding: "48px 0 24px" }}>
-      <div className="container grid grid-3" style={{ marginBottom: 32 }}>
+    <footer className="site-footer">
+      <div className="container footer-grid">
         <div>
-          <h3 style={{ marginBottom: 12 }}>Bright Future Institute</h3>
-          <p style={{ opacity: 0.85, fontSize: "0.9rem" }}>
-            Empowering students to achieve academic excellence through dedicated mentorship.
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+            <Logo size={46} />
+            <div>
+              <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, color: "white", fontSize: "1.1rem" }}>{info.instituteName}</div>
+              {info.tagline && <div style={{ fontSize: "0.78rem", color: "var(--color-accent-light)" }}>{info.tagline}</div>}
+            </div>
+          </div>
+          <p style={{ fontSize: "0.9rem", opacity: 0.85 }}>
+            Empowering students to achieve academic excellence through dedicated mentorship, structured courses and personal attention.
           </p>
         </div>
+
         <div>
-          <h4 style={{ marginBottom: 12 }}>Quick Links</h4>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, opacity: 0.85, fontSize: "0.9rem" }}>
-            <a href="/courses">Courses</a>
-            <a href="/faculty">Faculty</a>
-            <a href="/results">Results</a>
-            <a href="/contact">Contact</a>
+          <h4>Quick Links</h4>
+          <nav className="footer-links">
+            <Link to="/about">About Us</Link>
+            <Link to="/announcements">Announcements</Link>
+            <Link to="/gallery">Gallery</Link>
+            <Link to="/contact">Admissions &amp; Contact</Link>
+          </nav>
+        </div>
+
+        <div>
+          <h4>Academics</h4>
+          <nav className="footer-links">
+            <Link to="/courses">Courses</Link>
+            <Link to="/faculty">Faculty</Link>
+            <Link to="/toppers">Our Toppers</Link>
+            <Link to="/results">Results</Link>
+          </nav>
+        </div>
+
+        <div>
+          <h4>Contact Us</h4>
+          <div className="footer-contact">
+            {info.address && <span><Icon name="pin" /> {info.address}</span>}
+            {info.phone && <a href={telHref(info.phone)}><Icon name="phone" /> {info.phone}</a>}
+            {info.email && <a href={`mailto:${info.email}`}><Icon name="mail" /> {info.email}</a>}
           </div>
         </div>
-        <div>
-          <h4 style={{ marginBottom: 12 }}>Contact</h4>
-          <p style={{ opacity: 0.85, fontSize: "0.9rem" }}>📍 123 Education Lane, Ahmedabad</p>
-          <p style={{ opacity: 0.85, fontSize: "0.9rem" }}>📞 +91 98765 43210</p>
-          <p style={{ opacity: 0.85, fontSize: "0.9rem" }}>✉️ info@brightfuture.edu</p>
-        </div>
       </div>
-      <div className="container" style={{ borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 20, textAlign: "center", fontSize: "0.85rem", opacity: 0.7 }}>
-        © {new Date().getFullYear()} Bright Future Institute. All rights reserved.
+
+      <div className="footer-bottom">
+        <div className="container footer-bottom-inner">
+          <span>© {year} {info.instituteName}. All rights reserved.</span>
+          <Link to="/admin/login">Admin Login</Link>
+        </div>
       </div>
     </footer>
   );

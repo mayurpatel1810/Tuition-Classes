@@ -1,4 +1,5 @@
 import useFetch from "../../hooks/useFetch";
+import usePageTitle from "../../hooks/usePageTitle";
 import facultyService from "../../services/facultyService";
 import FacultyCard from "../../components/public/FacultyCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -6,6 +7,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 
 export default function Faculty() {
+  usePageTitle("Our Faculty");
   const { data: faculty, loading, error, refetch } = useFetch(() => facultyService.getAll());
 
   return (

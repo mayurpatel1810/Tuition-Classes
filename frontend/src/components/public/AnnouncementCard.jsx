@@ -17,7 +17,9 @@ export default function AnnouncementCard({ announcement }) {
         {announcement.description}
       </p>
       {announcement.announcementDate && (
-        <p style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{announcement.announcementDate}</p>
+        <p style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
+          {new Date(announcement.announcementDate + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+        </p>
       )}
     </div>
   );
