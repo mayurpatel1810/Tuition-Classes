@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useFetch from "../../hooks/useFetch";
+import usePageTitle from "../../hooks/usePageTitle";
 import DataTable from "./DataTable";
 import Modal from "./Modal";
 import ConfirmDialog from "./ConfirmDialog";
@@ -8,6 +9,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import ErrorMessage from "../common/ErrorMessage";
 
 export default function AdminCrudPage({ title, service, columns, fields, emptyForm }) {
+  usePageTitle(title);
   const { data: rows, loading, error, refetch } = useFetch(() => service.getAll());
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
@@ -15,8 +17,10 @@ export default function AdminCrudPage({ title, service, columns, fields, emptyFo
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState(null);
+  const [pageMessage, setPageMessage] = useState(null);
 
   const openAddModal = () => {
+    setPageMessage(null);
     setEditingRow(null);
     setFormData(emptyForm);
     setFormError(null);
@@ -46,6 +50,7 @@ export default function AdminCrudPage({ title, service, columns, fields, emptyFo
         await service.create(formData);
       }
       setModalOpen(false);
+      setPageMessage({ type: "success", text: editingRow ? "Record updated." : "Record added." });
       refetch();
     } catch (err) {
       setFormError(err.response?.data?.message || "Failed to save. Please check the form and try again.");
@@ -58,9 +63,11 @@ export default function AdminCrudPage({ title, service, columns, fields, emptyFo
     try {
       await service.delete(deleteTarget.id);
       setDeleteTarget(null);
+      setPageMessage({ type: "success", text: "Record deleted." });
       refetch();
     } catch (err) {
-      setFormError(err.response?.data?.message || "Failed to delete.");
+      // Shown on the page (the old code put this inside the closed modal, so it was never visible)
+      setPageMessage({ type: "error", text: err.response?.data?.message || "Failed to delete." });
       setDeleteTarget(null);
     }
   };
@@ -71,6 +78,13 @@ export default function AdminCrudPage({ title, service, columns, fields, emptyFo
         <h2>{title}</h2>
         <button className="btn btn-primary" onClick={openAddModal}>+ Add New</button>
       </div>
+
+      {pageMessage && (
+        <div className={`notice ${pageMessage.type === "success" ? "notice-success" : "notice-error"}`} style={{ display: "flex", justifyContent: "space-between" }}>
+          <span>{pageMessage.text}</span>
+          <button onClick={() => setPageMessage(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "inherit" }} aria-label="Dismiss">✕</button>
+        </div>
+      )}
 
       {loading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} onRetry={refetch} />}
